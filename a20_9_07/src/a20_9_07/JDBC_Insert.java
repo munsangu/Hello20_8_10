@@ -3,23 +3,26 @@ package a20_9_07;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.Scanner;
 
 public class JDBC_Insert 
 {
-	public static void main(String[] args) 
+	public static void main(String[] args) throws Exception 
 	{
 		String driver = "oracle.jdbc.OracleDriver";
 		String url = "jdbc:oracle:thin:@127.0.0.1:1521:xe";
 		String user = "system";
 		String password = "123456";
 		String sql = "insert into member(code, name, id, pwd, age) values(?,?,?,?,?) ";
+		Connection con = null;
+		PreparedStatement pstmt = null;
 		Scanner sc = new Scanner(System.in);
 		try
 		{
 		Class.forName(driver);
-		Connection con = DriverManager.getConnection(url, user, password);
-		PreparedStatement pstmt = con.prepareStatement(sql);
+		con = DriverManager.getConnection(url, user, password);
+		pstmt = con.prepareStatement(sql);
 		System.out.println("CODE 입력");
 		pstmt.setString(1, sc.next());
 		System.out.println("NAME 입력");
@@ -33,6 +36,13 @@ public class JDBC_Insert
 		int res = pstmt.executeUpdate();
 		if(res==1)System.out.println("성공");
 		}
+		catch(Exception e) 
+		{
+			System.out.println(e);
+		}
+		try {
+		pstmt.close();
+		con.close();}
 		catch(Exception e) 
 		{
 			System.out.println(e);
