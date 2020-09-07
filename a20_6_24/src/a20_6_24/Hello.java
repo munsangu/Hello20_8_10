@@ -4,5 +4,6 @@ public class Hello {
 		System.out.println("Hello");
 		System.out.println("ÃµÀç");
 		System.out.println("¿¬½À");
+		System.out.println("è×íåªì£¡");
 	}
 }
