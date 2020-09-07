@@ -63,3 +63,5 @@ alter table member modify(email varchar2(40));
 select * from member;
 alter table member drop column email;
 drop table member;
+
+alter table member modify(code varchar2(10) primary key);
