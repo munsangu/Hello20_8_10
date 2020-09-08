@@ -16,15 +16,19 @@ public class JDBC_Select
 		String password = "123456";
 		String sql = "select * from member where id = ? and pwd = ? ";
 		Scanner sc = new Scanner(System.in);
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		System.out.println("조회하실 ID를 입력");
+		String id = sc.next();
+		System.out.println("조회하실 비밀번호를 입력");
+		String pwd = sc.next();
 		try
 		{
 		Class.forName(driver);
-		Connection con = DriverManager.getConnection(url, user, password);
-		PreparedStatement pstmt = con.prepareStatement(sql);
-		System.out.println("조회하실 ID를 입력");
-		pstmt.setString(1, sc.next());
-		System.out.println("조회하실 비밀번호를 입력");
-		pstmt.setString(2, sc.next());
+		con = DriverManager.getConnection(url, user, password);
+		pstmt = con.prepareStatement(sql);
+		pstmt.setString(1, id);
+		pstmt.setString(2, pwd);
 		ResultSet rs = pstmt.executeQuery();
 		while(rs.next()) 
 			{
