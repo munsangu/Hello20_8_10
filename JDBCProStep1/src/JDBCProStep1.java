@@ -22,12 +22,14 @@ public class JDBCProStep1 implements ActionListener {
 	private JTextField txtEmail;
 	private JTextField txtTel;
 	private JTable table;
-	private JButton btnTotal, btnAdd, btnSearch, btnDel, btnCancel;
+	private JButton btnTotal, btnAdd, btnSearch, btnDel, btnCancel,btnUpdate;
+	private JScrollPane scrollPane;
 	private static final int NONE = 0;
 	private static final int ADD = 1;
 	private static final int DELETE = 2;
 	private static final int SEARCH = 3;
 	private static final int TOTAL = 4;
+	private static final int UPDATE = 5;
 	int cmd = NONE;
 	String driver = "oracle.jdbc.OracleDriver";
 	String url = "jdbc:oracle:thin:@127.0.0.1:1521:xe";
@@ -127,7 +129,7 @@ public class JDBCProStep1 implements ActionListener {
 		txtTel.setBounds(169, 193, 116, 21);
 		frame.getContentPane().add(txtTel);
 		
-		JScrollPane scrollPane = new JScrollPane();
+		scrollPane = new JScrollPane();
 		scrollPane.setBounds(328, 60, 376, 246);
 		frame.getContentPane().add(scrollPane);
 		
@@ -158,16 +160,18 @@ public class JDBCProStep1 implements ActionListener {
 		btnCancel.setBounds(573, 351, 97, 23);
 		frame.getContentPane().add(btnCancel);
 		
-		JButton button = new JButton("수정");
-		button.setEnabled(true);
-		button.setBounds(464, 351, 97, 23);
-		frame.getContentPane().add(button);
+		//수정
+		btnUpdate = new JButton("수정");
+		btnUpdate.setEnabled(true);
+		btnUpdate.setBounds(464, 351, 97, 23);
+		frame.getContentPane().add(btnUpdate);
 		
 		btnTotal.addActionListener(this);
 		btnAdd.addActionListener(this);
 		btnSearch.addActionListener(this);
 		btnDel.addActionListener(this);
 		btnCancel.addActionListener(this);
+		btnUpdate.addActionListener(this);
 		
 	}
 	// 추가버튼의 DB
@@ -253,6 +257,23 @@ public class JDBCProStep1 implements ActionListener {
 			e.printStackTrace();
 		}
 	}
+	// 수정버튼의 DB
+	private void update() 
+	{
+		System.out.println("수정");
+/*		System.out.print(txtNo.getText()+"  ");	
+		System.out.print(txtName.getText()+"  ");
+		System.out.print(txtEmail.getText()+"  ");
+		System.out.print(txtTel.getText()+"  ");*/
+		try 
+		{
+
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
 
 	public void actionPerformed(ActionEvent e) 
 	{
@@ -294,6 +315,15 @@ public class JDBCProStep1 implements ActionListener {
 			}
 			frame.setTitle("전체보기");
 			total();
+		}
+		else if(e.getSource()==btnUpdate) 
+		{
+			if(cmd!=UPDATE) 
+			{
+				call(UPDATE);
+			}
+			frame.setTitle("수정");
+			total();
 		}	
 		System.out.println("취소");
 		call(NONE);
@@ -314,6 +344,7 @@ public class JDBCProStep1 implements ActionListener {
 		btnAdd.setEnabled(true);
 		btnDel.setEnabled(true);
 		btnSearch.setEnabled(true);
+		btnUpdate.setEnabled(true);
 		btnCancel.setEnabled(true);
 	}
 	public void call(int command) 
@@ -322,6 +353,7 @@ public class JDBCProStep1 implements ActionListener {
 		btnAdd.setEnabled(false);
 		btnDel.setEnabled(false);
 		btnSearch.setEnabled(false);
+		btnUpdate.setEnabled(false);
 		btnCancel.setEnabled(true);
 		switch(command) 
 		{
@@ -346,8 +378,11 @@ public class JDBCProStep1 implements ActionListener {
 		case TOTAL:
 			cmd = TOTAL;
 			break;
+		case UPDATE:
+			cmd = UPDATE;
+			break;
 		case NONE:
-			cmd=NONE;
+			cmd = NONE;
 			break;		
 		}		
 	}	
