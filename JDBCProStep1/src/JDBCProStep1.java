@@ -5,8 +5,10 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Scanner;
 
+import javax.management.modelmbean.ModelMBeanInfoSupport;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -31,16 +33,19 @@ public class JDBCProStep1 implements ActionListener {
 	private static final int TOTAL = 4;
 	private static final int UPDATE = 5;
 	int cmd = NONE;
+	MyModel model;
 	String driver = "oracle.jdbc.OracleDriver";
 	String url = "jdbc:oracle:thin:@127.0.0.1:1521:xe";
 	String user = "system";
 	String password = "123456";
 	Connection con = null;
 	PreparedStatement pstmt = null;
+	PreparedStatement pstmtTotal, pstmtTotalScroll= null;
+	PreparedStatement pstmtSearch, pstmtSearchScroll= null;
 	String sqlTotal= "select * from customer";
 	String sqlInsert= "insert into customer values(?,?,?,?)";
 	String sqlDelete= "delete from customer where name=?";
-	String sqlUpdate= "update customer set email=? tel=? where code=?";
+	String sqlUpdate= "update customer set email=? , tel=? where code=?";
 	String sqlSearch= "select * from customer where name=?";
 	/**
 	 * Launch the application.
@@ -134,7 +139,7 @@ public class JDBCProStep1 implements ActionListener {
 		frame.getContentPane().add(scrollPane);
 		
 		table = new JTable();
-		scrollPane.setColumnHeaderView(table);
+		scrollPane.setViewportView(table);
 		// 전체보기
 		btnTotal = new JButton("전체보기");
 		btnTotal.setBounds(28, 351, 97, 23);
@@ -178,21 +183,13 @@ public class JDBCProStep1 implements ActionListener {
 	private void add() 
 	{
 		System.out.println("추가");
-/*		System.out.print(txtNo.getText()+"  ");	
-		System.out.print(txtName.getText()+"  ");
-		System.out.print(txtEmail.getText()+"  ");
-		System.out.print(txtTel.getText()+"  ");*/
-		String no = txtNo.getText();
-		String name = txtName.getText();
-		String email = txtEmail.getText();
-		String tel = txtTel.getText();
 		try 
 		{
 			pstmt = con.prepareStatement(sqlInsert,ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-			pstmt.setInt(1, Integer.valueOf(no));
-			pstmt.setString(2, name);
-			pstmt.setString(3, email);
-			pstmt.setString(4, tel);
+			pstmt.setInt(1, Integer.valueOf(txtNo.getText()));
+			pstmt.setString(2, txtName.getText());
+			pstmt.setString(3, txtEmail.getText());
+			pstmt.setString(4, txtTel.getText());
 			int res = pstmt.executeUpdate();
 			if(res==1)System.out.println("성공");
 			else System.out.println("실패");
@@ -206,10 +203,6 @@ public class JDBCProStep1 implements ActionListener {
 	private void del() 
 	{
 		System.out.println("삭제");
-/*		System.out.print(txtNo.getText()+"  ");	
-		System.out.print(txtName.getText()+"  ");
-		System.out.print(txtEmail.getText()+"  ");
-		System.out.print(txtTel.getText()+"  ");*/
 		try 
 		{
 			pstmt = con.prepareStatement(sqlDelete,ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
@@ -227,13 +220,20 @@ public class JDBCProStep1 implements ActionListener {
 	private void search() 
 	{
 		System.out.println("검색");
-/*		System.out.print(txtNo.getText()+"  ");	
-		System.out.print(txtName.getText()+"  ");
-		System.out.print(txtEmail.getText()+"  ");
-		System.out.print(txtTel.getText()+"  ");*/
 		try 
 		{
-
+			pstmtSearchScroll=con.prepareStatement(sqlSearch,ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+			pstmtSearch=con.prepareStatement(sqlSearch);
+			pstmtSearchScroll.setString(1, txtName.getText());
+			pstmtSearch.setString(1, txtName.getText());
+			ResultSet rsScroll=pstmtSearchScroll.executeQuery();
+			ResultSet rs=pstmtSearch.executeQuery();
+			
+			if(model==null)model=new MyModel();
+			model.getRowCount(rsScroll);
+			model.setData(rs);
+			table.setModel(model);
+			table.updateUI();
 		}
 		catch(Exception e)
 		{
@@ -244,13 +244,17 @@ public class JDBCProStep1 implements ActionListener {
 	private void total() 
 	{
 		System.out.println("전체보기");
-/*		System.out.print(txtNo.getText()+"  ");	
-		System.out.print(txtName.getText()+"  ");
-		System.out.print(txtEmail.getText()+"  ");
-		System.out.print(txtTel.getText()+"  ");*/
 		try 
 		{
-
+			pstmtTotalScroll=con.prepareStatement(sqlTotal,ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+			pstmtTotal=con.prepareStatement(sqlTotal);
+			ResultSet rsScroll=pstmtTotalScroll.executeQuery();
+			ResultSet rs=pstmtTotal.executeQuery();
+			if(model==null)model=new MyModel();
+			model.getRowCount(rsScroll);
+			model.setData(rs);
+			table.setModel(model);
+			table.updateUI();
 		}
 		catch(Exception e)
 		{
@@ -261,13 +265,15 @@ public class JDBCProStep1 implements ActionListener {
 	private void update() 
 	{
 		System.out.println("수정");
-/*		System.out.print(txtNo.getText()+"  ");	
-		System.out.print(txtName.getText()+"  ");
-		System.out.print(txtEmail.getText()+"  ");
-		System.out.print(txtTel.getText()+"  ");*/
 		try 
 		{
-
+			pstmt=con.prepareStatement(sqlUpdate);
+			pstmt.setString(1, txtEmail.getText());
+			pstmt.setString(2, txtTel.getText());
+			pstmt.setInt(3, Integer.valueOf(txtNo.getText()));
+			int res = pstmt.executeUpdate();
+			if(res==1)System.out.println("성공");
+			else System.out.println("실패");	
 		}
 		catch(Exception e)
 		{
@@ -307,6 +313,16 @@ public class JDBCProStep1 implements ActionListener {
 			frame.setTitle("검색");
 			search();
 		}
+		else if(e.getSource()==btnUpdate) 
+		{
+			if(cmd!=UPDATE) 
+			{
+				call(UPDATE);
+				return;
+			}
+			frame.setTitle("수정");
+			update();
+		}	
 		else if(e.getSource()==btnTotal) 
 		{
 			if(cmd!=TOTAL) 
@@ -316,15 +332,7 @@ public class JDBCProStep1 implements ActionListener {
 			frame.setTitle("전체보기");
 			total();
 		}
-		else if(e.getSource()==btnUpdate) 
-		{
-			if(cmd!=UPDATE) 
-			{
-				call(UPDATE);
-			}
-			frame.setTitle("수정");
-			total();
-		}	
+
 		System.out.println("취소");
 		call(NONE);
 		init();
@@ -379,6 +387,10 @@ public class JDBCProStep1 implements ActionListener {
 			cmd = TOTAL;
 			break;
 		case UPDATE:
+			txtNo.setEditable(true);
+			txtEmail.setEditable(true);
+			txtTel.setEditable(true);
+			btnUpdate.setEnabled(true);
 			cmd = UPDATE;
 			break;
 		case NONE:
