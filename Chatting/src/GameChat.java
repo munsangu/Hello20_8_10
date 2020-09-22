@@ -29,9 +29,9 @@ public class GameChat extends Applet implements ActionListener, Runnable
 	{
 		try 
 		{
-			mySocket = new Socket("127.0.0.1",2587);
-			out = new PrintWriter(new OutputStreamWriter(mySocket.getOutputStream(),"KSC5601"),true);
-			in = new BufferedReader(new InputStreamReader(mySocket.getInputStream(),"KSC5601"),1024);
+			mySocket = new Socket("127.0.0.1",2587); // IP 포트번호를 통해 소캣 생성
+			out = new PrintWriter(new OutputStreamWriter(mySocket.getOutputStream(),"KSC5601"),true);	// 소캣을 통한 출력스트림 만듦
+			in = new BufferedReader(new InputStreamReader(mySocket.getInputStream(),"KSC5601"),1024);   // 소캣을 통한 입력스트림 만듦
 		}
 		catch(UnknownHostException e) 
 		{
@@ -44,18 +44,18 @@ public class GameChat extends Applet implements ActionListener, Runnable
 	
 	
 	//GUI
-	setLayout(new BorderLayout());
-	memo = new TextArea(10,55);
-	add("Center",memo);
+	setLayout(new BorderLayout());//배치관리자; 보드레이아웃 설정(동,서,남,북,중앙)
+	memo = new TextArea(10,55);	// memo -> textarea
+	add("Center",memo);			// 중앙에 memo를 추가
 	
-	myPanel = new Panel();
-	name = new TextField(8);
-	name.setText("대화명");
-	myPanel.add(name);
-	input = new TextField(40);
-	input.addActionListener(this);
-	myPanel.add(input);
-	add("South",myPanel);
+	myPanel = new Panel();	// 패널 생성
+	name = new TextField(8); // 텍스트필드 8칸 생성
+	name.setText("대화명");	// name에 대화명이라는 글을 생성
+	myPanel.add(name);	// 패널에 name을 추가
+	input = new TextField(40); // 텍스트필드 40칸 생성 
+	input.addActionListener(this); // ★ input에 액션리스너를 추가
+	myPanel.add(input); // 패널에 input 추가
+	add("South",myPanel); // 애플릿 추가(myPanel채널)
 	}
 	public void start() 
 	{
