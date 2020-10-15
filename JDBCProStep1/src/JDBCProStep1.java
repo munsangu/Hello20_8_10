@@ -1,3 +1,4 @@
+
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -5,17 +6,17 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
+
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 
-//1ë‹¨ê³„: implements ActionListener ìƒì†ë°›ìŒ
-public class JDBCProStep1 implements ActionListener{
+public class JDBCProStep1 implements ActionListener {
 
 	private JFrame frame;
 	private JTextField txtNo;
@@ -23,37 +24,29 @@ public class JDBCProStep1 implements ActionListener{
 	private JTextField txtEmail;
 	private JTextField txtTel;
 	private JTable table;
-	private JButton btnTotal, btnAdd, btnSearch, btnDel, btnCancel;
-	JButton btnUpdate;
-	
-	private static final int NONE=0;  //ì·¨ì†Œ
-	private static final int ADD=1;   //ì¶”ê°€(insert)
-	private static final int DELETE=2; //ì‚­ì œ(delete)
-	private static final int SEARCH=3;  //(select)
-	private static final int TOTAL=4;   //(select)
-	private static final int UPDATE=5;   //(update)
-	int cmd=NONE;    
-	
+	private JButton btnTotal, btnAdd, btnSearch, btnDel, btnCancel,btnUpdate;
+	private JScrollPane scrollPane;
+	private static final int NONE = 0;
+	private static final int ADD = 1;
+	private static final int DELETE = 2;
+	private static final int SEARCH = 3;
+	private static final int TOTAL = 4;
+	private static final int UPDATE = 5;
+	int cmd = NONE;
 	MyModel model;
-	
-	
-	//DBì—°ê²°ì„ ìœ„í•œ ë³€ìˆ˜ë“¤
-	String driver="oracle.jdbc.OracleDriver";
-	String url="jdbc:oracle:thin:@127.0.0.1:1521:xe";
-	String user="system";
-	String password="123456";
-	Connection con=null;
-	PreparedStatement pstmt=null;
-	PreparedStatement pstmtTotal, pstmtTotalScroll;
-	PreparedStatement pstmtSearch, pstmtSearchScroll;
-	
-	
-	String sqlTotal="select * from customer";
-	String sqlInsert="insert into customer values(?,?,?,?)";
-	String sqlDelete="delete from customer where name=?";
-	String sqlUpdate="update customer set email=?, tel=? where code=? ";
-	String sqlSearch="select * from customer where name=?";
-		
+	String driver = "oracle.jdbc.OracleDriver";
+	String url = "jdbc:oracle:thin:@127.0.0.1:1521:xe";
+	String user = "system";
+	String password = "123456";
+	Connection con = null;
+	PreparedStatement pstmt = null;
+	PreparedStatement pstmtTotal, pstmtTotalScroll= null;
+	PreparedStatement pstmtSearch, pstmtSearchScroll= null;
+	String sqlTotal= "select * from customer";
+	String sqlInsert= "insert into customer values(?,?,?,?)";
+	String sqlDelete= "delete from customer where name=?";
+	String sqlUpdate= "update customer set email=? , tel=? where code=?";
+	String sqlSearch= "select * from customer where name=?";
 
 	/**
 	 * Launch the application.
@@ -73,308 +66,286 @@ public class JDBCProStep1 implements ActionListener{
 
 	/**
 	 * Create the application.
+	 * @throws Exception 
 	 */
-	public JDBCProStep1()  {
+	public JDBCProStep1(){
 		initialize();
 		init();
 		dbcon();
 	}
+	
+	public void dbcon() 
+	{
 
-	public void dbcon() {
-		try {
-			Class.forName(driver);
-			con=DriverManager.getConnection(url, user, password);
-			System.out.println("ì„±ê³µ");
-		} catch (Exception e) {
+		try 
+		{
+		Class.forName(driver);
+		con = DriverManager.getConnection(url, user, password);
+		System.out.println("¼º°ø");
+		}
+		catch(Exception e)
+		{
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setTitle("ê³ ê°ê´€ë¦¬í”„ë¡œê·¸ë¨");
-		frame.setBounds(100, 100, 563, 398);
+		frame.setTitle("\uACE0\uAC1D\uAD00\uB9AC\uD504\uB85C\uADF8\uB7A8");
+		frame.setBounds(100, 100, 787, 456);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
+			
+		JPanel panel = new JPanel();
+		panel.setBounds(-2, 0, 771, 417);
+		frame.getContentPane().add(panel);
+		panel.setLayout(null);
 		
-		JLabel lblNewLabel = new JLabel("ë²ˆí˜¸");
-		lblNewLabel.setBounds(24, 42, 57, 15);
-		frame.getContentPane().add(lblNewLabel);
+		JLabel lblNewLabel = new JLabel("¹øÈ£");
+		lblNewLabel.setBounds(91, 95, 36, 15);
+		panel.add(lblNewLabel);
 		
-		JLabel lblNewLabel_1 = new JLabel("ì´ë¦„");
-		lblNewLabel_1.setBounds(24, 80, 57, 15);
-		frame.getContentPane().add(lblNewLabel_1);
+		JLabel lblNewLabel_1 = new JLabel("ÀÌ¸§");
+		lblNewLabel_1.setBounds(91, 120, 57, 15);
+		panel.add(lblNewLabel_1);
 		
-		JLabel lblNewLabel_2 = new JLabel("ì´ë©”ì¼");
-		lblNewLabel_2.setBounds(24, 118, 57, 15);
-		frame.getContentPane().add(lblNewLabel_2);
+		JLabel lblNewLabel_2 = new JLabel("ÀÌ¸ŞÀÏ");
+		lblNewLabel_2.setBounds(82, 158, 57, 15);
+		panel.add(lblNewLabel_2);
 		
-		JLabel lblNewLabel_3 = new JLabel("ì „í™”ë²ˆí˜¸");
-		lblNewLabel_3.setBounds(24, 156, 57, 15);
-		frame.getContentPane().add(lblNewLabel_3);
+		JLabel lblNewLabel_3 = new JLabel("ÀüÈ­¹øÈ£");
+		lblNewLabel_3.setBounds(71, 185, 68, 15);
+		panel.add(lblNewLabel_3);
 		
 		txtNo = new JTextField();
-		txtNo.setBounds(93, 39, 116, 21);
-		frame.getContentPane().add(txtNo);
+		txtNo.setBounds(151, 92, 116, 21);
+		panel.add(txtNo);
 		txtNo.setColumns(10);
 		
 		txtName = new JTextField();
-		txtName.setBounds(93, 77, 116, 21);
-		frame.getContentPane().add(txtName);
+		txtName.setBounds(151, 123, 116, 21);
+		panel.add(txtName);
 		txtName.setColumns(10);
 		
 		txtEmail = new JTextField();
-		txtEmail.setBounds(93, 115, 116, 21);
-		frame.getContentPane().add(txtEmail);
+		txtEmail.setBounds(151, 155, 116, 21);
+		panel.add(txtEmail);
 		txtEmail.setColumns(10);
 		
 		txtTel = new JTextField();
-		txtTel.setBounds(93, 153, 116, 21);
-		frame.getContentPane().add(txtTel);
+		txtTel.setBounds(151, 182, 116, 21);
+		panel.add(txtTel);
 		txtTel.setColumns(10);
 		
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(224, 29, 253, 243);
-		frame.getContentPane().add(scrollPane);
+		scrollPane = new JScrollPane();
+		scrollPane.setBounds(320, 38, 393, 230);
+		panel.add(scrollPane);
 		
 		table = new JTable();
 		scrollPane.setViewportView(table);
+		// ÀüÃ¼º¸±â
+		btnTotal = new JButton("ÀüÃ¼º¸±â");
+		btnTotal.setBounds(106, 308, 81, 23);
+		panel.add(btnTotal);
 		
-		//ì „ì²´ë³´ê¸°
-		btnTotal = new JButton("ì „ì²´ë³´ê¸°"); 
-		btnTotal.setBounds(12, 304, 81, 23);
-		frame.getContentPane().add(btnTotal);
+		//Ãß°¡
+		btnAdd = new JButton("Ãß°¡");
+		btnAdd.setBounds(210, 308, 57, 23);
+		panel.add(btnAdd);
 		
-		//ì¶”ê°€
-		btnAdd = new JButton("ì¶”ê°€"); 
-		btnAdd.setBounds(96, 304, 81, 23);
-		frame.getContentPane().add(btnAdd);
-		
-		//ì‚­ì œ
-		btnDel = new JButton("ì‚­ì œ");   
-		btnDel.setBounds(178, 304, 81, 23);
-		frame.getContentPane().add(btnDel);
-		
-		//ê²€ìƒ‰
-		btnSearch = new JButton("ê²€ìƒ‰"); 
-		btnSearch.setBounds(260, 304, 81, 23);
-		frame.getContentPane().add(btnSearch);
-		
-		//ì·¨ì†Œ
-		btnCancel = new JButton("ì·¨ì†Œ");   
-		btnCancel.setBounds(429, 304, 81, 23);
-		frame.getContentPane().add(btnCancel);
-		
-		btnUpdate = new JButton("ìˆ˜ì •");
-		btnUpdate.setBounds(342, 304, 81, 23);
-		frame.getContentPane().add(btnUpdate);
-		
-		//2ë‹¨ê³„: ì»´í¬ë„ŒíŠ¸ì— ì•¡ì…˜ë¦¬ìŠ¤ë„ˆë¥¼ ì¶”ê°€í•œë‹¤
-		btnTotal.addActionListener(this);
-		btnAdd.addActionListener(this);
-		btnDel.addActionListener(this);
-		btnSearch.addActionListener(this);
-		btnCancel.addActionListener(this);
-		btnUpdate.addActionListener(this);
-		
-	}
-
-	//ì¶”ê°€ë²„íŠ¼ì˜ DB
-	//String sqlInsert="insert into customer values(?,?,?,?)";
-	public void add() {
-		String no=txtNo.getText();
-		String name=txtName.getText();
-		String email=txtEmail.getText();
-		String tel=txtTel.getText();
-		System.out.println(no+","+name+","+email+","+tel);
-		try {
-			pstmt=con.prepareStatement(sqlInsert);
-			pstmt.setInt(1, Integer.valueOf(no));  //?
-			pstmt.setString(2, name);
-			pstmt.setString(3, email);
-			pstmt.setString(4, tel);
-			int res=pstmt.executeUpdate();
-			if(res==1) System.out.println("ì„±ê³µ");
-			else System.out.println("ì‹¤íŒ¨");
+		//»èÁ¦
+		btnDel = new JButton("»èÁ¦");
+		btnDel.setBounds(286, 308, 57, 23);
+		panel.add(btnDel);
 			
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				pstmt.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
-	
-	
-	//sqlDelete="delete from customer where name=?";
-	//ì‚­ì œë²„íŠ¼ì˜ DB
-	public void del() {
-		System.out.println(txtName.getText()); //txtNameìƒìì˜ ê°’ì„ ê°€ì ¸ì˜¤ë¼
-		try {
-			String name=txtName.getText();
-			pstmt=con.prepareStatement(sqlDelete);  //1)ì¤€ë¹„ëœí†µ
-			pstmt.setString(1, name);   //2)ì¤€ë¹„ëœ í†µì— ì„¸íŒ…
-			int res=pstmt.executeUpdate(); //3)ì¤€ë¹„ëœ í†µ ì‹¤í–‰
-			if(res==1) System.out.println("ì‚­ì œë˜ì—ˆìŠµë‹ˆë‹¤.");
-			else System.out.println("ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤.");
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				pstmt.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+		//°Ë»ö
+		btnSearch = new JButton("°Ë»ö");
+		btnSearch.setBounds(381, 308, 57, 23);
+		panel.add(btnSearch);
+					
+		//Ãë¼Ò
+		btnCancel = new JButton("Ãë¼Ò");
+		btnCancel.setBounds(569, 308, 57, 23);
+		panel.add(btnCancel);
+					
+		//¼öÁ¤
+		btnUpdate = new JButton("¼öÁ¤");
+		btnUpdate.setBounds(474, 308, 57, 23);
+		panel.add(btnUpdate);
+		
+		btnUpdate.setEnabled(true);
+		btnUpdate.addActionListener(this);
+		btnCancel.addActionListener(this);
+		btnSearch.addActionListener(this);
+		btnDel.addActionListener(this);
+		btnAdd.addActionListener(this);
+		btnTotal.addActionListener(this);
 		
 	}
-	
-	//ê²€ìƒ‰ë²„íŠ¼ì˜ DB
-	//sqlSearch="select * from customer where name=?";
-	public void search() {
-		try {
-			String name=txtName.getText();
-			pstmtSearchScroll=con.prepareStatement(sqlSearch,
-					ResultSet.TYPE_SCROLL_SENSITIVE,
-					ResultSet.CONCUR_UPDATABLE);   //ë™ì ì¸ ì¤€ë¹„í†µ-->last()
-			pstmtSearch=con.prepareStatement(sqlSearch);  //ì •ì ì¸ ì¤€ë¹„í†µ
-			pstmtSearchScroll.setString(1, name);  //1ì€ ì²«ë²ˆì§¸?
-			pstmtSearch.setString(1, name);  //1ì€ ì²«ë²ˆì§¸?
+	// Ãß°¡¹öÆ°ÀÇ DB
+	private void add() 
+	{
+		System.out.println("Ãß°¡");
+		try 
+		{
+			pstmt = con.prepareStatement(sqlInsert,ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+			pstmt.setInt(1, Integer.valueOf(txtNo.getText()));
+			pstmt.setString(2, txtName.getText());
+			pstmt.setString(3, txtEmail.getText());
+			pstmt.setString(4, txtTel.getText());
+			int res = pstmt.executeUpdate();
+			if(res==1)System.out.println("¼º°ø");
+			else System.out.println("½ÇÆĞ");
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+	// »èÁ¦¹öÆ°ÀÇ DB
+	private void del() 
+	{
+		System.out.println("»èÁ¦");
+		try 
+		{
+			pstmt = con.prepareStatement(sqlDelete,ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+			pstmt.setString(1,txtName.getText());
+			int res = pstmt.executeUpdate();
+			if(res==1)System.out.println("¼º°ø");
+			else System.out.println("½ÇÆĞ");
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+	// °Ë»ö¹öÆ°ÀÇ DB
+	private void search() 
+	{
+		System.out.println("°Ë»ö");
+		try 
+		{
+			pstmtSearchScroll=con.prepareStatement(sqlSearch,ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
+			pstmtSearch=con.prepareStatement(sqlSearch);
+			pstmtSearchScroll.setString(1, txtName.getText());
+			pstmtSearch.setString(1, txtName.getText());
 			ResultSet rsScroll=pstmtSearchScroll.executeQuery();
 			ResultSet rs=pstmtSearch.executeQuery();
-			if(model==null) model=new MyModel();
+			
+			if(model==null)model=new MyModel();
 			model.getRowCount(rsScroll);
 			model.setData(rs);
 			table.setModel(model);
 			table.updateUI();
-			
-		} catch (Exception e) {
+		}
+		catch(Exception e)
+		{
 			e.printStackTrace();
-		} finally {
-			try {
-				pstmtSearchScroll.close();
-				pstmtSearch.close();
-			} catch (Exception e2) {
-				// TODO: handle exception
-			}
 		}
 	}
-	
-	//ì „ì²´ë³´ê¸°ë²„íŠ¼ì˜ DB
-	public void total() {
-		System.out.println("ì „ì²´ë³´ê¸°");
-		try {
-			pstmtTotalScroll=con.prepareStatement(sqlTotal,
-					ResultSet.TYPE_SCROLL_SENSITIVE,
-					ResultSet.CONCUR_UPDATABLE);
+	// ÀüÃ¼º¸±â¹öÆ°ÀÇ DB
+	private void total() 
+	{
+		System.out.println("ÀüÃ¼º¸±â");
+		try 
+		{
+			pstmtTotalScroll=con.prepareStatement(sqlTotal,ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_UPDATABLE);
 			pstmtTotal=con.prepareStatement(sqlTotal);
-			
 			ResultSet rsScroll=pstmtTotalScroll.executeQuery();
 			ResultSet rs=pstmtTotal.executeQuery();
-			if(model==null) model=new MyModel();
+			if(model==null)model=new MyModel();
 			model.getRowCount(rsScroll);
 			model.setData(rs);
 			table.setModel(model);
 			table.updateUI();
-		} catch (Exception e) {
+		}
+		catch(Exception e)
+		{
 			e.printStackTrace();
-		} finally {
-			try {
-				pstmtTotalScroll.close();
-				pstmtTotal.close();
-			} catch (Exception e2) {
-				// TODO: handle exception
-			}
-			
 		}
 	}
-	
-	//sqlUpdate="update customer set email=?, tel=? where code=? ";
-	public void update() {
-		String code=txtNo.getText();
-		String email=txtEmail.getText();
-		String tel=txtTel.getText();
-		try {
+	// ¼öÁ¤¹öÆ°ÀÇ DB
+	private void update() 
+	{
+		System.out.println("¼öÁ¤");
+		try 
+		{
 			pstmt=con.prepareStatement(sqlUpdate);
-			pstmt.setString(1, email);
-			pstmt.setString(2, tel);
-			pstmt.setInt(3, Integer.valueOf(code));
-			
-			int res=pstmt.executeUpdate();
-			if(res==1) System.out.println("ìˆ˜ì •ì„±ê³µ");
-			else System.out.println("ì‹¤íŒ¨");
-			
-		} catch (Exception e) {
+			pstmt.setString(1, txtEmail.getText());
+			pstmt.setString(2, txtTel.getText());
+			pstmt.setInt(3, Integer.valueOf(txtNo.getText()));
+			int res = pstmt.executeUpdate();
+			if(res==1)System.out.println("¼º°ø");
+			else System.out.println("½ÇÆĞ");	
+		}
+		catch(Exception e)
+		{
 			e.printStackTrace();
-		} finally {
-			try {
-				pstmt.close();
-			} catch (Exception e2) {
-				// TODO: handle exception
-			}
 		}
 	}
-	
-	
-	
-	//3ë‹¨ê³„: actionPerformed êµ¬í˜„í•œë‹¤
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		if(e.getSource()==btnAdd) {  //ì¶”ê°€ë²„íŠ¼ ë‘ë²ˆ
-			if(cmd!=ADD)  {
+
+	public void actionPerformed(ActionEvent e) 
+	{
+		if(e.getSource()==btnAdd) 
+		{
+			if(cmd!=ADD) 
+			{   
 				call(ADD);
 				return;
 			}
-			frame.setTitle("ì¶”ê°€");
-			add();   //dbì—°ê²°í•˜ì—¬ insertì‘ì—…ì´ ë™ì‘ë¨
-			total();
-		} 
-		else if(e.getSource()==btnDel) { //ì‚­ì œë²„íŠ¼ ë‘ë²ˆ
-			if(cmd!=DELETE) {
-				call(DELETE);
-				return;
-			}
-			frame.setTitle("ì‚­ì œ");
-			del();   //dbì—°ê²°í•˜ì—¬ ì‚­ì œì‘ì—…
-			total();
-		} 
-		else if(e.getSource()==btnSearch) { //ê²€ìƒ‰ë²„íŠ¼ ë‘ë²ˆ
-			if(cmd!=SEARCH) {
-				call(SEARCH);
-				return;
-			}
-			frame.setTitle("ê²€ìƒ‰");
-			search();    //dbì—°ê²°í•˜ì—¬ ì´ë¦„ê²€ìƒ‰
-		} 
-		else if(e.getSource()==btnUpdate) {
-			if(cmd!=UPDATE) {
+			frame.setTitle("Ãß°¡");
+			add();	// db¿¡ ¿¬°áÇÏ¿© Ãß°¡ ÀÛ¾÷ÀÌ µÊ
+		}
+		else if(e.getSource()==btnDel)
+		{		
+		if(cmd!=DELETE) 
+		{
+			call(DELETE);
+			return;
+		}
+			frame.setTitle("»èÁ¦");
+			del();
+		}
+		else if(e.getSource()==btnSearch) 
+		{		
+		if(cmd!=SEARCH) 
+		{
+			call(SEARCH);
+			return;
+		}
+			frame.setTitle("°Ë»ö");
+			search();
+		}
+		else if(e.getSource()==btnUpdate) 
+		{
+			if(cmd!=UPDATE) 
+			{
 				call(UPDATE);
 				return;
 			}
-			frame.setTitle("ìˆ˜ì •");
+			frame.setTitle("¼öÁ¤");
 			update();
+		}	
+		else if(e.getSource()==btnTotal) 
+		{
+			if(cmd!=TOTAL) 
+			{
+				call(TOTAL);
+			}
+			frame.setTitle("ÀüÃ¼º¸±â");
 			total();
 		}
-		else if(e.getSource()==btnTotal) { //ì „ì²´ê²€ìƒ‰ í•œë²ˆ
-			call(TOTAL);
-			frame.setTitle("ì „ì²´ë³´ê¸°");
-			total();
-		} 
-		//ì·¨ì†Œë²„íŠ¼ ì¸ ê²½ìš°
-		System.out.println("ì·¨ì†Œ");
+
+		System.out.println("Ãë¼Ò");
 		call(NONE);
 		init();
 	}
 
-	public void init() {
+	public void init() 
+	{
 		txtNo.setText("");
 		txtName.setText("");
 		txtEmail.setText("");
@@ -387,51 +358,51 @@ public class JDBCProStep1 implements ActionListener{
 		btnAdd.setEnabled(true);
 		btnDel.setEnabled(true);
 		btnSearch.setEnabled(true);
+		btnUpdate.setEnabled(true);
 		btnCancel.setEnabled(true);
 	}
-	
-	public void call(int command) {  //cmd=1,2,3,4,5
+	public void call(int command) 
+	{	// ÅØ½ºÆ® ÇÊµåÀÇ ÆíÁı »óÅÂ on/off
 		btnTotal.setEnabled(false);
 		btnAdd.setEnabled(false);
 		btnDel.setEnabled(false);
 		btnSearch.setEnabled(false);
+		btnUpdate.setEnabled(false);
 		btnCancel.setEnabled(true);
-		switch(command) {
+		switch(command) 
+		{
 		case ADD:
 			txtNo.setEditable(true);
 			txtName.setEditable(true);
 			txtEmail.setEditable(true);
 			txtTel.setEditable(true);
-			
-			btnAdd.setEnabled(true);   //addë²„íŠ¼ë§Œ ì¼œê¸°
-			cmd=ADD;
+			btnAdd.setEnabled(true);
+			cmd = ADD;
 			break;
 		case DELETE:
-			txtName.setEditable(true);   //ì´ë¦„ë§Œ í¸ì§‘ê°€ëŠ¥
-			
-			btnDel.setEnabled(true);   //delë²„íŠ¼ë§Œ ì¼œê¸°
-			cmd=DELETE;
+			txtName.setEditable(true);
+			btnDel.setEnabled(true);
+			cmd = DELETE;
 			break;
 		case SEARCH:
-			txtName.setEditable(true);   //ì´ë¦„ë§Œ í¸ì§‘ê°€ëŠ¥
-			
-			btnSearch.setEnabled(true);   //searchë²„íŠ¼ë§Œ ì¼œê¸°
-			cmd=SEARCH;
+			txtName.setEditable(true);
+			btnSearch.setEnabled(true);
+			cmd = SEARCH;
+			break;
+		case TOTAL:
+			cmd = TOTAL;
 			break;
 		case UPDATE:
 			txtNo.setEditable(true);
 			txtEmail.setEditable(true);
 			txtTel.setEditable(true);
-			
-			btnUpdate.setEnabled(true);  //ìˆ˜ì •ë²„íŠ¼ë§Œ ì¼œê¸°
-			cmd=UPDATE;
-			break;
-		case TOTAL:
-			cmd=TOTAL;
+			btnUpdate.setEnabled(true);
+			cmd = UPDATE;
 			break;
 		case NONE:
-			cmd=NONE;
-			break;
-		}
+			cmd = NONE;
+			break;		
+		}		
 	}
+
 }
