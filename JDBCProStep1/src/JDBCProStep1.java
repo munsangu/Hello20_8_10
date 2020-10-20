@@ -1,17 +1,25 @@
 
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.Arrays;
 
-
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -26,6 +34,9 @@ public class JDBCProStep1 implements ActionListener {
 	private JTable table;
 	private JButton btnTotal, btnAdd, btnSearch, btnDel, btnCancel,btnUpdate;
 	private JScrollPane scrollPane;
+	private JTextField id;
+	private JPasswordField password2;
+	private ImagePanel panel_1;
 	private static final int NONE = 0;
 	private static final int ADD = 1;
 	private static final int DELETE = 2;
@@ -98,82 +109,85 @@ public class JDBCProStep1 implements ActionListener {
 		frame.setBounds(100, 100, 787, 456);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
-			
-		JPanel panel = new JPanel();
-		panel.setBounds(-2, 0, 771, 417);
+		
+		ImagePanel panel = new ImagePanel(new ImageIcon("C:/git-hub/munsangu/Hello20_8_10/JDBCProStep1/image/welcome.jpg").getImage());
+		panel.setBounds(0, 0, 956, 605);
 		frame.getContentPane().add(panel);
 		panel.setLayout(null);
+		panel.setLayout(null);
+		panel.setVisible(false);
 		
+
 		JLabel lblNewLabel = new JLabel("번호");
-		lblNewLabel.setBounds(91, 95, 36, 15);
+		lblNewLabel.setBounds(238, 258, 56, 15);
 		panel.add(lblNewLabel);
 		
 		JLabel lblNewLabel_1 = new JLabel("이름");
-		lblNewLabel_1.setBounds(91, 120, 57, 15);
+		lblNewLabel_1.setBounds(238, 292, 63, 15);
 		panel.add(lblNewLabel_1);
 		
 		JLabel lblNewLabel_2 = new JLabel("이메일");
-		lblNewLabel_2.setBounds(82, 158, 57, 15);
+		lblNewLabel_2.setBounds(229, 317, 72, 15);
 		panel.add(lblNewLabel_2);
 		
 		JLabel lblNewLabel_3 = new JLabel("전화번호");
-		lblNewLabel_3.setBounds(71, 185, 68, 15);
+		lblNewLabel_3.setBounds(213, 348, 81, 15);
 		panel.add(lblNewLabel_3);
 		
 		txtNo = new JTextField();
-		txtNo.setBounds(151, 92, 116, 21);
+		txtNo.setBounds(270, 255, 116, 21);
 		panel.add(txtNo);
 		txtNo.setColumns(10);
 		
 		txtName = new JTextField();
-		txtName.setBounds(151, 123, 116, 21);
+		txtName.setBounds(270, 286, 116, 21);
 		panel.add(txtName);
 		txtName.setColumns(10);
 		
 		txtEmail = new JTextField();
-		txtEmail.setBounds(151, 155, 116, 21);
+		txtEmail.setBounds(270, 318, 116, 21);
 		panel.add(txtEmail);
 		txtEmail.setColumns(10);
 		
 		txtTel = new JTextField();
-		txtTel.setBounds(151, 182, 116, 21);
+		txtTel.setBounds(270, 345, 116, 21);
 		panel.add(txtTel);
 		txtTel.setColumns(10);
 		
 		scrollPane = new JScrollPane();
-		scrollPane.setBounds(320, 38, 393, 230);
+		scrollPane.setBounds(422, 201, 410, 230);
 		panel.add(scrollPane);
 		
 		table = new JTable();
 		scrollPane.setViewportView(table);
 		// 전체보기
 		btnTotal = new JButton("전체보기");
-		btnTotal.setBounds(106, 308, 81, 23);
+		btnTotal.setBounds(195, 471, 111, 23);
 		panel.add(btnTotal);
 		
 		//추가
 		btnAdd = new JButton("추가");
-		btnAdd.setBounds(210, 308, 57, 23);
+		btnAdd.setBounds(318, 471, 68, 23);
 		panel.add(btnAdd);
 		
 		//삭제
 		btnDel = new JButton("삭제");
-		btnDel.setBounds(286, 308, 57, 23);
+		btnDel.setBounds(398, 471, 81, 23);
 		panel.add(btnDel);
-			
+		
 		//검색
 		btnSearch = new JButton("검색");
-		btnSearch.setBounds(381, 308, 57, 23);
+		btnSearch.setBounds(500, 471, 81, 23);
 		panel.add(btnSearch);
-					
+		
 		//취소
 		btnCancel = new JButton("취소");
-		btnCancel.setBounds(569, 308, 57, 23);
+		btnCancel.setBounds(688, 471, 72, 23);
 		panel.add(btnCancel);
-					
+		
 		//수정
 		btnUpdate = new JButton("수정");
-		btnUpdate.setBounds(474, 308, 57, 23);
+		btnUpdate.setBounds(593, 471, 83, 23);
 		panel.add(btnUpdate);
 		
 		btnUpdate.setEnabled(true);
@@ -183,6 +197,68 @@ public class JDBCProStep1 implements ActionListener {
 		btnDel.addActionListener(this);
 		btnAdd.addActionListener(this);
 		btnTotal.addActionListener(this);
+		
+		ImagePanel panel_1_1 = new ImagePanel(new ImageIcon("C:/git-hub/munsangu/Hello20_8_10/JDBCProStep1/image/welcome.jpg").getImage());
+		panel_1_1.setBounds(0, 0, 954, 605);
+		frame.getContentPane().add(panel_1_1);
+		panel_1_1.setBounds(0, 0, 954, 605);
+		frame.getContentPane().add(panel_1_1);
+		panel_1_1.setLayout(null);
+		
+		
+		JLabel txtid = new JLabel("ID :");
+		txtid.setFont(new Font("굴림", Font.BOLD, 20));
+		txtid.setBounds(309, 291, 134, 55);
+		panel_1_1.add(txtid);
+		
+		JLabel txtpw = new JLabel("PASSWORD :");
+		txtpw.setFont(new Font("굴림", Font.BOLD, 20));
+		txtpw.setBounds(222, 365, 134, 55);
+		panel_1_1.add(txtpw);
+		
+		JLabel lblLogIn = new JLabel("Log In");
+		lblLogIn.setFont(new Font("Dialog", Font.PLAIN, 30));
+		lblLogIn.setBounds(375, 211, 234, 33);
+		panel_1_1.add(lblLogIn);
+		
+		id = new JTextField();
+		id.setFont(new Font("굴림", Font.BOLD, 20));
+		id.setBounds(354, 283, 194, 63);
+		panel_1_1.add(id);
+		id.setColumns(10);
+		
+		JButton btnNewButton = new JButton("");
+		btnNewButton.setForeground(Color.WHITE);
+		btnNewButton.setIcon(new ImageIcon("C:\\git-hub\\munsangu\\Hello20_8_10\\JDBCProStep1\\image\\login.jpg"));
+		btnNewButton.setPressedIcon(new ImageIcon("C:\\git-hub\\munsangu\\Hello20_8_10\\JDBCProStep1\\image\\login_clicked.jpg"));
+		btnNewButton.addActionListener(new ActionListener() 
+		{
+			public void actionPerformed(ActionEvent e) 
+			{
+				if(id.getText().equals("lcu")&&Arrays.equals(password2.getPassword(), "1234".toCharArray())) 
+				{
+					System.out.println("Welcome MSW");
+					JOptionPane.showMessageDialog(null, "You have logged in successfully");
+					panel_1_1.setVisible(false);
+					panel.setVisible(true);
+				}
+				else 
+				{
+					JOptionPane.showMessageDialog(null, "You failed to log in");
+				}
+			}
+		});
+		btnNewButton.setBounds(560, 365, 55, 55);
+		panel_1_1.add(btnNewButton);
+		
+		password2 = new JPasswordField();
+		password2.setBounds(357, 367, 191, 55);
+		panel_1_1.add(password2);
+		frame.setResizable(false);
+		frame.setSize(964,599);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.getContentPane().setLayout(null);
+		frame.setResizable(false);
 		
 	}
 	// 추가버튼의 DB
@@ -404,5 +480,31 @@ public class JDBCProStep1 implements ActionListener {
 			break;		
 		}		
 	}
-
+}
+class ImagePanel extends JPanel
+{
+	private Image img;
+	
+	public ImagePanel(Image img) 
+	{
+		this.img = img;
+		setSize(new  Dimension(img.getWidth(null),img.getHeight(null)));
+		setPreferredSize(new Dimension(img.getWidth(null),img.getHeight(null)));
+		setLayout(null);
+	}
+	
+	public int getWidth() 
+	{
+		return img.getWidth(null);
+	}
+	public int getHeight() 
+	{
+		return img.getHeight(null);
+	}
+	
+	public void paintComponent(Graphics g) 
+	{
+		g.drawImage(img,0,0,null);
+	}
+	
 }
